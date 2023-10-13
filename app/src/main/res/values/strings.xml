@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">ToDoApp</string>
+    <string name="header_text">Мои дела</string>
+    <string name="edit_name_placeholder">Что надо сделать…</string>
+    <string name="deadline_text">Сделать до</string>
+    <string name="importance_text">Важность</string>
+    <string name="save_text">Сохранить</string>
+    <string name="delete_text">Удалить</string>
+</resources>
