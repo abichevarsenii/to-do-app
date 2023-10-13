@@ -1,5 +1,6 @@
 package com.example.todoapp
 
+import android.app.Application
 import android.app.DatePickerDialog
 import android.os.Bundle
 import android.text.TextWatcher
@@ -12,6 +13,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.todoapp.databinding.FragmentAddItemBinding
 import com.google.android.material.internal.TextWatcherAdapter
+import kotlinx.coroutines.*
 import java.time.LocalDate
 import java.util.*
 import kotlin.random.Random
@@ -20,7 +22,8 @@ import kotlin.random.Random
 class AddItemFragment : Fragment() {
 
     lateinit var binding: FragmentAddItemBinding
-    private var item = ToDoItemsRepository().getDefaultItem()
+    lateinit var scope: CoroutineScope
+    private var item : ToDoItem? = null
     val args: AddItemFragmentArgs by navArgs()
 
     override fun onCreateView(
@@ -35,8 +38,15 @@ class AddItemFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val action = AddItemFragmentDirections.actionAddItemFragmentToListFragment()
         if (args.id != -1) {
-            val item = ToDoItemsRepository().getToDo(args.id)
-            binding.nameEditText.setText(item.name)
+            scope = CoroutineScope(Dispatchers.Default)
+            scope.launch {
+                val item = (activity?.application as MyApp).repository.getToDo(args.id)
+                if (item != null) {
+                    withContext(Dispatchers.Main){
+                        binding.nameEditText.setText(item.name)
+                    }
+                }
+            }
         }
         binding.closeButton.setOnClickListener {
             view.findNavController().navigate(action)
@@ -53,9 +63,14 @@ class AddItemFragment : Fragment() {
         }
         binding.nameEditText.addTextChangedListener({ _, _, _, _ -> }, { _, _, _, _ -> },
             {
-                item.name = it.toString()
+                item?.name = it.toString()
             }
         )
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        scope.cancel()
     }
 
     private fun isCorrectData(): Boolean {
