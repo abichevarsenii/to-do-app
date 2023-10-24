@@ -1,23 +1,21 @@
 package com.example.todoapp
 
 import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface DatabaseAPI {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(item: ItemEntity?) : Long
+    suspend fun insert(item: ItemEntity) : Long
 
     @Delete
-    suspend fun delete(item: ItemEntity?)
+    suspend fun delete(item: ItemEntity)
 
-    @Query("SELECT * FROM ItemEntity")
+    @Query("SELECT * FROM items")
     suspend fun getAllToDos(): List<ItemEntity>?
 
-    @Query("SELECT * FROM ItemEntity WHERE id LIKE :id")
-    suspend fun getById(id: Int): List<ItemEntity>?
-
-    @Query("DELETE FROM ItemEntity")
-    suspend fun deleteAll()
+    @Query("SELECT * FROM items WHERE id = :id LIMIT 1")
+    suspend fun getById(id: Long): ItemEntity?
 
 }

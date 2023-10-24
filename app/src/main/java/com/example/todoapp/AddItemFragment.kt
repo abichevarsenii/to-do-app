@@ -25,7 +25,9 @@ class AddItemFragment : Fragment() {
     lateinit var scope: CoroutineScope
     private var item : ToDoItem? = null
     val args: AddItemFragmentArgs by navArgs()
-
+    private val myApp: MyApp by lazy {
+        activity?.application as MyApp
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -37,14 +39,21 @@ class AddItemFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val action = AddItemFragmentDirections.actionAddItemFragmentToListFragment()
-        if (args.id != -1) {
-            scope = CoroutineScope(Dispatchers.Default)
+        scope = CoroutineScope(Dispatchers.Default)
+        if (args.id != -1L) {
             scope.launch {
-                val item = (activity?.application as MyApp).repository.getToDo(args.id)
+                val item = myApp.repository.getToDo(args.id)
                 if (item != null) {
                     withContext(Dispatchers.Main){
                         binding.nameEditText.setText(item.name)
                     }
+                }
+            }
+        } else {
+            scope.launch {
+                item = myApp.repository.getDefaultItem()
+                withContext(Dispatchers.Main){
+                    binding.saveButton.isEnabled = true
                 }
             }
         }
@@ -66,6 +75,14 @@ class AddItemFragment : Fragment() {
                 item?.name = it.toString()
             }
         )
+        binding.saveButton.setOnClickListener {
+            scope.launch {
+                if (item != null) {
+                    myApp.repository.addToDo(item!!)
+                }
+            }
+            view.findNavController().navigate(action)
+        }
     }
 
     override fun onDestroyView() {

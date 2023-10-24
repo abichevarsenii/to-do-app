@@ -1,5 +1,9 @@
 package com.example.todoapp
 
+import kotlinx.coroutines.flow.last
+import kotlinx.coroutines.flow.lastOrNull
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
 import java.time.LocalDate
 import java.util.*
 import kotlin.random.Random
@@ -12,20 +16,21 @@ class ToDoItemsRepository(val databaseAPI: DatabaseAPI) {
             name = entity.name,
             importance = entity.importance,
             isCompleted = entity.isCompleted,
-            deadline = entity.deadline,
-            createdDate = entity.createdDate,
-            modifiedDate = entity.modifiedDate
+            deadline = entity.deadline?.let { LocalDate.parse(entity.deadline) },
+            createdDate = LocalDate.parse(entity.createdDate),
+            modifiedDate = entity.modifiedDate?.let { LocalDate.parse(entity.modifiedDate)}
         )
     }
 
     private fun mappingClassToEntity(item: ToDoItem): ItemEntity {
         return ItemEntity().apply {
+            id = item.id
             name = item.name
             importance = item.importance
             isCompleted = item.isCompleted
-            deadline = item.deadline
-            createdDate = item.createdDate
-            modifiedDate = item.modifiedDate
+            deadline = item.deadline?.toString()
+            createdDate = item.createdDate.toString()
+            modifiedDate = item.modifiedDate?.toString()
         }
     }
 
@@ -33,8 +38,8 @@ class ToDoItemsRepository(val databaseAPI: DatabaseAPI) {
         return databaseAPI.getAllToDos()?.map { mappingEntityToClass(it) } ?: emptyList()
     }
 
-    public suspend fun getToDo(id: Int): ToDoItem? {
-        return databaseAPI.getById(id)?.map { mappingEntityToClass(it) }?.last()
+    public suspend fun getToDo(id: Long): ToDoItem? {
+        return databaseAPI.getById(id)?.let { mappingEntityToClass(it) }
     }
 
     public suspend fun addToDo(item: ToDoItem) {
