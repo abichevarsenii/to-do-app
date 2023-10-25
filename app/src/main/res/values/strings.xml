@@ -6,4 +6,10 @@
     <string name="importance_text">Важность</string>
     <string name="save_text">Сохранить</string>
     <string name="delete_text">Удалить</string>
+    <string name="select_date">Выберите дату</string>
+    <array name="importance">
+        <item>Низкая</item>
+        <item>Нормальная</item>
+        <item>Срочная</item>
+    </array>
 </resources>

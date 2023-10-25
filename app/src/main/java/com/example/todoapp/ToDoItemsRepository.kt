@@ -8,7 +8,7 @@ import java.time.LocalDate
 import java.util.*
 import kotlin.random.Random
 
-class ToDoItemsRepository(val databaseAPI: DatabaseAPI) {
+class ToDoItemsRepository(private val databaseAPI: DatabaseAPI) {
 
     private fun mappingEntityToClass(entity: ItemEntity): ToDoItem {
         return ToDoItem(
@@ -44,6 +44,10 @@ class ToDoItemsRepository(val databaseAPI: DatabaseAPI) {
 
     public suspend fun addToDo(item: ToDoItem) {
         databaseAPI.insert(mappingClassToEntity(item))
+    }
+
+    public suspend fun deleteToDo(id: Long) {
+        databaseAPI.deleteById(id)
     }
 
     public suspend fun getDefaultItem(): ToDoItem {

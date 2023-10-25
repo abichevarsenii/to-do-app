@@ -65,7 +65,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
         android:dropDownWidth="wrap_content"
-        android:entries="@android:array/postalAddressTypes"
+        android:entries="@array/importance"
         android:spinnerMode="dropdown"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -90,41 +90,40 @@
         app:layout_constraintBottom_toTopOf="@+id/importanceSpinner"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view"
-        tools:text="@string/importance_text" />
+        android:text="@string/importance_text" />
 
     <com.google.android.material.switchmaterial.SwitchMaterial
-        android:id="@+id/switch1"
+        android:id="@+id/deadlineSwitch"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="10dp"
         android:layout_marginVertical="10dp"
-        android:showText="false"
         android:switchTextAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintBottom_toTopOf="@+id/editTextDate"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view3"
-        tools:text="@string/deadline_text" />
+        android:text="@string/deadline_text" />
 
     <EditText
         android:id="@+id/editTextDate"
         style="@style/Widget.Material3.AutoCompleteTextView.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:autofillHints="false"
         android:ems="10"
+        android:focusable="false"
         android:inputType="date"
         android:paddingTop="0dp"
         android:paddingBottom="0dp"
-        android:text="2001.20.10"
+        android:text="@string/select_date"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textColor="@color/purple_500"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/switch1"
-        tools:text="2001.20.10"
-        android:autofillHints="false" />
+        app:layout_constraintTop_toBottomOf="@+id/deadlineSwitch" />
 
     <View
         android:id="@+id/view4"
@@ -135,7 +134,7 @@
         app:layout_constraintTop_toBottomOf="@+id/editTextDate" />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/deleteButton"
         style="@style/Widget.Material3.Button.TextButton.Icon"
         android:layout_width="wrap_content"
         android:layout_height="0dp"

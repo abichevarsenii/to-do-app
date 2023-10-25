@@ -1,37 +1,37 @@
 package com.example.todoapp
 
-import android.app.Application
 import android.app.DatePickerDialog
 import android.os.Bundle
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.todoapp.databinding.FragmentAddItemBinding
-import com.google.android.material.internal.TextWatcherAdapter
 import kotlinx.coroutines.*
 import java.time.LocalDate
 import java.util.*
-import kotlin.random.Random
 
 
 class AddItemFragment : Fragment() {
 
-    lateinit var binding: FragmentAddItemBinding
-    lateinit var scope: CoroutineScope
-    private var item : ToDoItem? = null
-    val args: AddItemFragmentArgs by navArgs()
+    private lateinit var binding: FragmentAddItemBinding
+    private var item: ToDoItem? = null
+    private val args: AddItemFragmentArgs by navArgs()
     private val myApp: MyApp by lazy {
         activity?.application as MyApp
     }
+    private val scope: CoroutineScope by lazy {
+        CoroutineScope(Dispatchers.Default)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentAddItemBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
@@ -39,25 +39,17 @@ class AddItemFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val action = AddItemFragmentDirections.actionAddItemFragmentToListFragment()
-        scope = CoroutineScope(Dispatchers.Default)
         if (args.id != -1L) {
-            scope.launch {
-                val item = myApp.repository.getToDo(args.id)
-                if (item != null) {
-                    withContext(Dispatchers.Main){
-                        binding.nameEditText.setText(item.name)
-                    }
-                }
-            }
+            initialization()
         } else {
-            scope.launch {
-                item = myApp.repository.getDefaultItem()
-                withContext(Dispatchers.Main){
-                    binding.saveButton.isEnabled = true
-                }
-            }
+            defaultInitialization()
         }
         binding.closeButton.setOnClickListener {
+            if (item != null) {
+                scope.launch {
+                    myApp.repository.deleteToDo(item!!.id)
+                }
+            }
             view.findNavController().navigate(action)
         }
         binding.editTextDate.setOnClickListener {
@@ -65,6 +57,9 @@ class AddItemFragment : Fragment() {
             val dialog = DatePickerDialog(
                 context!!, { view, year, month, day ->
                     binding.editTextDate.setText("${year}.${month}.${day}")
+                    if (binding.deadlineSwitch.isChecked) {
+                        item?.deadline = LocalDate.of(year, month, day)
+                    }
                 }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH)
             )
@@ -82,6 +77,63 @@ class AddItemFragment : Fragment() {
                 }
             }
             view.findNavController().navigate(action)
+        }
+        binding.importanceSpinner.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    adapter: AdapterView<*>?,
+                    view: View?,
+                    i: Int,
+                    l: Long
+                ) {
+                    item?.importance = Importance.values()[i]
+                }
+
+                override fun onNothingSelected(p0: AdapterView<*>?) {
+                    item?.importance = Importance.NORMAL
+                }
+
+            }
+        binding.deadlineSwitch.setOnCheckedChangeListener { _, value ->
+            binding.editTextDate.visibility = if (value) View.VISIBLE else View.GONE
+            if (!value) {
+                item?.deadline = null
+            }
+        }
+        binding.deleteButton.setOnClickListener {
+            if (args.id != -1L) {
+                scope.launch {
+                    myApp.repository.deleteToDo(args.id)
+                }
+            }
+            view.findNavController().navigate(action)
+        }
+    }
+
+    private fun defaultInitialization() {
+        scope.launch {
+            item = myApp.repository.getDefaultItem()
+            withContext(Dispatchers.Main) {
+                binding.saveButton.isEnabled = true
+            }
+        }
+    }
+
+    private fun initialization() {
+        scope.launch {
+            item = myApp.repository.getToDo(args.id)
+            if (item != null) {
+                withContext(Dispatchers.Main) {
+                    binding.nameEditText.setText(item!!.name)
+                    binding.saveButton.isEnabled = true
+                    if (item!!.deadline != null) {
+                        binding.deadlineSwitch.isChecked = true
+                        binding.editTextDate.visibility = View.VISIBLE
+                        binding.editTextDate.setText(item!!.deadline.toString())
+                    }
+                    binding.importanceSpinner.setSelection(item!!.importance.ordinal)
+                }
+            }
         }
     }
 

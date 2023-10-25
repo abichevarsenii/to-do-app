@@ -1,7 +1,6 @@
 package com.example.todoapp
 
 import androidx.room.*
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface DatabaseAPI {
@@ -11,6 +10,9 @@ interface DatabaseAPI {
 
     @Delete
     suspend fun delete(item: ItemEntity)
+
+    @Query("DELETE FROM items WHERE id = :id")
+    suspend fun deleteById(id: Long)
 
     @Query("SELECT * FROM items")
     suspend fun getAllToDos(): List<ItemEntity>?
