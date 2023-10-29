@@ -1,19 +1,27 @@
 package com.example.todoapp
 
+import android.graphics.Paint
 import android.view.View
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todoapp.databinding.ToDoItemBinding
 
-class ToDoViewHolder(binding: ToDoItemBinding) : RecyclerView.ViewHolder(binding.root){
-    val name = binding.toDoNameText
-    val date = binding.toDoDateText
-    val completed = binding.toDoCheckbox
-    val infoButton = binding.toDoInfoButton
 
-    fun onBind(toDoItem: ToDoItem, onItemClickCallback : (ToDoItem) -> Unit){
+class ToDoViewHolder(binding: ToDoItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    val name = binding.toDoNameText
+    private val date = binding.toDoDateText
+    private val completed = binding.toDoCheckbox
+    private val infoButton = binding.toDoInfoButton
+    private val priorityIcon = binding.priorityIcon
+
+    fun onBind(
+        toDoItem: ToDoItem,
+        onItemClickCallback: (ToDoItem) -> Unit,
+        onItemCompletedCallback: (Boolean, Long) -> Unit
+    ) {
         name.text = toDoItem.name
         completed.isChecked = toDoItem.isCompleted
-        if (toDoItem.deadline != null){
+        if (toDoItem.deadline != null) {
             date.visibility = View.VISIBLE
             date.text = toDoItem.deadline.toString()
         } else {
@@ -21,6 +29,27 @@ class ToDoViewHolder(binding: ToDoItemBinding) : RecyclerView.ViewHolder(binding
         }
         infoButton.setOnClickListener {
             onItemClickCallback(toDoItem)
+        }
+        priorityIcon.visibility = View.VISIBLE
+        when (toDoItem.importance){
+            Importance.LOW -> priorityIcon.setImageResource(R.drawable.priority_low)
+            Importance.NORMAL -> priorityIcon.visibility = View.GONE
+            Importance.URGENT -> priorityIcon.setImageResource(R.drawable.priority_high)
+        }
+        completed.setOnCheckedChangeListener { _, value ->
+            changeCompleted(name, value)
+            changeCompleted(date, value)
+            toDoItem.isCompleted = value
+            onItemCompletedCallback(value, toDoItem.id)
+        }
+    }
+
+    private fun changeCompleted(textView: TextView, value: Boolean) {
+        textView.isEnabled = !value
+        if (value){
+            textView.paintFlags = textView.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+        } else {
+            textView.paintFlags = textView.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
         }
     }
 

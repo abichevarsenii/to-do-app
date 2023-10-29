@@ -13,7 +13,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/toDoDateText"
-        app:layout_constraintStart_toEndOf="@+id/toDoCheckbox"
+        app:layout_constraintStart_toEndOf="@+id/priorityIcon"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed" />
 
@@ -24,7 +24,7 @@
         android:text="bbbbbbb"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/toDoCheckbox"
+        app:layout_constraintStart_toEndOf="@+id/priorityIcon"
         app:layout_constraintTop_toBottomOf="@+id/toDoNameText" />
 
     <CheckBox
@@ -46,5 +46,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@android:drawable/ic_menu_info_details" />
+
+    <ImageView
+        android:id="@+id/priorityIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="2dp"
+        app:layout_constraintBottom_toBottomOf="@+id/toDoDateText"
+        app:layout_constraintStart_toEndOf="@+id/toDoCheckbox"
+        app:layout_constraintTop_toTopOf="@+id/toDoNameText"
+        app:srcCompat="@drawable/priority_high" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

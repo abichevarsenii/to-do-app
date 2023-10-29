@@ -7,7 +7,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.todoapp.databinding.ToDoItemBinding
 
 
-class ToDoItemAdapter(private val onItemClickCallback : (ToDoItem) -> Unit) : RecyclerView.Adapter<ToDoViewHolder>() {
+class ToDoItemAdapter(
+    private val onItemClickCallback: (ToDoItem) -> Unit,
+    private val onItemCheckedCallback: (Boolean, Long) -> Unit,
+    ) : RecyclerView.Adapter<ToDoViewHolder>() {
 
     var itemsList = listOf<ToDoItem>()
         set(value) {
@@ -32,6 +35,6 @@ class ToDoItemAdapter(private val onItemClickCallback : (ToDoItem) -> Unit) : Re
     }
 
     override fun onBindViewHolder(holder: ToDoViewHolder, position: Int) {
-        holder.onBind(itemsList[position], onItemClickCallback)
+        holder.onBind(itemsList[position], onItemClickCallback, onItemCheckedCallback)
     }
 }

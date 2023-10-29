@@ -11,9 +11,14 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.todoapp.databinding.FragmentAddItemBinding
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDate
-import java.util.*
+import java.util.Calendar
+import java.util.TimeZone
 
 
 class AddItemFragment : Fragment() {
@@ -45,7 +50,7 @@ class AddItemFragment : Fragment() {
             defaultInitialization()
         }
         binding.closeButton.setOnClickListener {
-            if (item != null) {
+            if (item != null && args.id == -1L) {
                 scope.launch {
                     myApp.repository.deleteToDo(item!!.id)
                 }
@@ -55,7 +60,7 @@ class AddItemFragment : Fragment() {
         binding.editTextDate.setOnClickListener {
             val calendar: Calendar = Calendar.getInstance(TimeZone.getDefault())
             val dialog = DatePickerDialog(
-                context!!, { view, year, month, day ->
+                requireContext(), { view, year, month, day ->
                     binding.editTextDate.setText("${year}.${month}.${day}")
                     if (binding.deadlineSwitch.isChecked) {
                         item?.deadline = LocalDate.of(year, month, day)

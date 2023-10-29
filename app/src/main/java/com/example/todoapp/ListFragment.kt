@@ -20,6 +20,7 @@ class ListFragment : Fragment() {
 
     lateinit var binding: FragmentListBinding
     lateinit var scope: CoroutineScope
+    private var isVisibleCompletedItems = true
     private val myApp: MyApp by lazy {
         activity?.application as MyApp
     }
@@ -28,7 +29,7 @@ class ListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentListBinding.inflate(layoutInflater,container,false)
+        binding = FragmentListBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 
@@ -40,18 +41,38 @@ class ListFragment : Fragment() {
             view.findNavController().navigate(action)
         }
         val layoutManager = LinearLayoutManager(view.context, LinearLayoutManager.VERTICAL, false)
-        val adapter = ToDoItemAdapter {
-            val action = ListFragmentDirections.actionListFragmentToAddItemFragment(it.id)
-            view.findNavController().navigate(action)
-        }
+        val adapter = ToDoItemAdapter(
+            {
+                val action = ListFragmentDirections.actionListFragmentToAddItemFragment(it.id)
+                view.findNavController().navigate(action)
+            },
+            { value, id ->
+                scope.launch {
+                    val item = myApp.repository.getToDo(id)
+                    if (item != null) {
+                        item.isCompleted = value
+                        myApp.repository.addToDo(item)
+                    }
+                }
+            })
         scope.launch {
             val items = myApp.repository.getToDos()
             adapter.itemsList = items
-            if (items.isNotEmpty())
-                Log.i("TAG_1", items.joinToString())
         }
         binding.recyclerView.layoutManager = layoutManager
         binding.recyclerView.adapter = adapter
+
+        binding.showCompletedButton.setOnClickListener {
+            isVisibleCompletedItems = !isVisibleCompletedItems
+            scope.launch {
+                val items = myApp.repository.getToDos()
+                if (isVisibleCompletedItems){
+                    adapter.itemsList = items
+                } else {
+                    adapter.itemsList = items.filter { !it.isCompleted }
+                }
+            }
+        }
     }
 
     override fun onDestroy() {
