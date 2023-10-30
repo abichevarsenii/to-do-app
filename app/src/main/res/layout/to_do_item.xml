@@ -45,7 +45,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_menu_info_details" />
+        app:srcCompat="@drawable/info_outline"
+        app:tint="@color/material_dynamic_neutral_variant50" />
 
     <ImageView
         android:id="@+id/priorityIcon"
