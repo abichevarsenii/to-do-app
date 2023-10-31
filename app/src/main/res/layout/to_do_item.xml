@@ -9,29 +9,32 @@
         android:id="@+id/toDoNameText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:textSize="16sp"
+        android:textAppearance="@style/Body"
         app:layout_constraintBottom_toTopOf="@+id/toDoDateText"
         app:layout_constraintStart_toEndOf="@+id/priorityIcon"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="Дело 1" />
 
     <TextView
         android:id="@+id/toDoDateText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="bbbbbbb"
+        android:textAppearance="@style/Subhead"
+        android:textColor="@color/label_tertiary"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/priorityIcon"
-        app:layout_constraintTop_toBottomOf="@+id/toDoNameText" />
+        app:layout_constraintTop_toBottomOf="@+id/toDoNameText"
+        tools:text="bbbbbbb" />
 
     <CheckBox
         android:id="@+id/toDoCheckbox"
         style="@android:style/Widget.Material.CompoundButton.CheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:buttonTint="@color/support_separator"
+        android:checked="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -46,13 +49,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/info_outline"
-        app:tint="@color/material_dynamic_neutral_variant50" />
+        app:tint="@color/label_tertiary" />
 
     <ImageView
         android:id="@+id/priorityIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="2dp"
+        android:paddingHorizontal="4dp"
         app:layout_constraintBottom_toBottomOf="@+id/toDoDateText"
         app:layout_constraintStart_toEndOf="@+id/toDoCheckbox"
         app:layout_constraintTop_toTopOf="@+id/toDoNameText"

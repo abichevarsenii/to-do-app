@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/material_dynamic_neutral90"
+    android:background="@color/back_primary"
     tools:context=".ListFragment">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -12,8 +12,12 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
-        android:background="@color/material_dynamic_neutral99"
+        android:background="@drawable/layout_bg"
+        android:backgroundTint="@color/back_secondary"
+        android:elevation="4dp"
+        android:paddingVertical="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/showCompletedButton"
@@ -27,20 +31,21 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="32dp"
         android:clickable="true"
-        app:backgroundTint="#007AFF"
-        android:tint="@android:color/white"
+        android:tint="@color/color_white"
+        app:backgroundTint="@color/color_blue"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/add" />
 
     <TextView
         android:id="@+id/headerTextView"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="48dp"
         android:text="@string/header_text"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display2"
+        android:textAppearance="@style/LargeTitle"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -49,7 +54,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Выполнено - 5"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textAppearance="@style/Subhead"
+        android:textColor="@color/label_tertiary"
         app:layout_constraintStart_toStartOf="@+id/headerTextView"
         app:layout_constraintTop_toBottomOf="@+id/headerTextView" />
 
