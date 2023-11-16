@@ -1,9 +1,12 @@
-package com.example.todoapp
+package com.example.todoapp.ui.list.view
 
 import android.graphics.Paint
 import android.view.View
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.todoapp.core.Importance
+import com.example.todoapp.R
+import com.example.todoapp.domain.ToDoItem
 import com.example.todoapp.databinding.ToDoItemBinding
 
 

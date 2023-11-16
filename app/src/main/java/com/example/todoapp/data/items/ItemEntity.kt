@@ -1,7 +1,8 @@
-package com.example.todoapp
+package com.example.todoapp.data.items
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.todoapp.core.Importance
 import java.time.LocalDate
 
 @Entity(tableName = "items")

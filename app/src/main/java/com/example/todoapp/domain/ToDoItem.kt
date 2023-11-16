@@ -1,6 +1,7 @@
-package com.example.todoapp
+package com.example.todoapp.domain
 
 import android.os.Parcelable
+import com.example.todoapp.core.Importance
 import java.time.LocalDate
 import kotlinx.parcelize.Parcelize
 

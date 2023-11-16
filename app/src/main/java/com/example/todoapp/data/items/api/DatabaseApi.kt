@@ -1,9 +1,10 @@
-package com.example.todoapp
+package com.example.todoapp.data.items.api
 
 import androidx.room.*
+import com.example.todoapp.data.items.ItemEntity
 
 @Dao
-interface DatabaseAPI {
+interface DatabaseApi {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(item: ItemEntity) : Long

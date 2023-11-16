@@ -1,4 +1,4 @@
-package com.example.todoapp
+package com.example.todoapp.ui.additem.view
 
 import android.app.DatePickerDialog
 import android.os.Bundle
@@ -10,7 +10,12 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
+import com.example.todoapp.core.Importance
+import com.example.todoapp.MyApp
+import com.example.todoapp.data.items.ToDoItemsRepository
+import com.example.todoapp.domain.ToDoItem
 import com.example.todoapp.databinding.FragmentAddItemBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -19,16 +24,17 @@ import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import java.util.Calendar
 import java.util.TimeZone
+import javax.inject.Inject
 
 
+@AndroidEntryPoint
 class AddItemFragment : Fragment() {
 
     private lateinit var binding: FragmentAddItemBinding
     private var item: ToDoItem? = null
     private val args: AddItemFragmentArgs by navArgs()
-    private val myApp: MyApp by lazy {
-        activity?.application as MyApp
-    }
+    @Inject
+    lateinit var repository : ToDoItemsRepository
     private val scope: CoroutineScope by lazy {
         CoroutineScope(Dispatchers.Default)
     }
@@ -52,7 +58,7 @@ class AddItemFragment : Fragment() {
         binding.closeButton.setOnClickListener {
             if (item != null && args.id == -1L) {
                 scope.launch {
-                    myApp.repository.deleteToDo(item!!.id)
+                    repository.deleteToDo(item!!.id)
                 }
             }
             view.findNavController().navigate(action)
@@ -78,7 +84,7 @@ class AddItemFragment : Fragment() {
         binding.saveButton.setOnClickListener {
             scope.launch {
                 if (item != null) {
-                    myApp.repository.addToDo(item!!)
+                    repository.addToDo(item!!)
                 }
             }
             view.findNavController().navigate(action)
@@ -108,7 +114,7 @@ class AddItemFragment : Fragment() {
         binding.deleteButton.setOnClickListener {
             if (args.id != -1L) {
                 scope.launch {
-                    myApp.repository.deleteToDo(args.id)
+                    repository.deleteToDo(args.id)
                 }
             }
             view.findNavController().navigate(action)
@@ -116,17 +122,17 @@ class AddItemFragment : Fragment() {
     }
 
     private fun defaultInitialization() {
-        scope.launch {
-            item = myApp.repository.getDefaultItem()
+        /*scope.launch {
+            item = repository.getDefaultItem()
             withContext(Dispatchers.Main) {
                 binding.saveButton.isEnabled = true
             }
-        }
+        }*/
     }
 
     private fun initialization() {
-        scope.launch {
-            item = myApp.repository.getToDo(args.id)
+        /*scope.launch {
+            item = repository.getToDo(args.id)
             if (item != null) {
                 withContext(Dispatchers.Main) {
                     binding.nameEditText.setText(item!!.name)
@@ -139,7 +145,7 @@ class AddItemFragment : Fragment() {
                     binding.importanceSpinner.setSelection(item!!.importance.ordinal)
                 }
             }
-        }
+        }*/
     }
 
     override fun onDestroyView() {
