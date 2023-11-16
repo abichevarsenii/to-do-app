@@ -27,7 +27,7 @@ class ListViewModel @Inject constructor(private val itemsRepository: ToDoItemsRe
     }
 
     fun onToDoChangedClicked(id : Long, view: View){
-        val action = ListFragmentDirections.actionListFragmentToAddItemFragment()
+        val action = ListFragmentDirections.actionListFragmentToAddItemFragment(id)
         view.findNavController().navigate(action)
     }
 

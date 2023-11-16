@@ -1,6 +1,5 @@
 package com.example.todoapp.ui.additem.view
 
-import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,24 +8,12 @@ import android.widget.AdapterView
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.todoapp.core.Importance
-import com.example.todoapp.MyApp
-import com.example.todoapp.data.items.ToDoItemsRepository
-import com.example.todoapp.domain.ToDoItem
+import com.example.todoapp.R
 import com.example.todoapp.databinding.FragmentAddItemBinding
 import com.example.todoapp.ui.additem.stateholders.AddItemViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.time.LocalDate
-import java.util.Calendar
-import java.util.TimeZone
-import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -46,21 +33,15 @@ class AddItemFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (args.id != -1L) {
-            initialization()
-        } else {
-            defaultInitialization()
-        }
-        binding.closeButton.setOnClickListener {
-            viewModel.onDeleteItem(args.id)
-            viewModel.onNavigateToList(view)
-        }
+        setUpFields()
+        binding.closeButton.setOnClickListener { viewModel.onNavigateToList(view) }
         binding.editTextDate.setOnClickListener { viewModel.onDatePicked(requireContext()) }
         binding.nameEditText.addTextChangedListener { viewModel.onNameTextChanged(it) }
         binding.saveButton.setOnClickListener {
             viewModel.onItemAdded()
             viewModel.onNavigateToList(view)
         }
+        binding.importanceSpinner.setSelection(Importance.NORMAL.ordinal)
         binding.importanceSpinner.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
@@ -69,55 +50,41 @@ class AddItemFragment : Fragment() {
                     i: Int,
                     l: Long
                 ) {
-                    item?.importance = Importance.values()[i]
+                    viewModel.onImportanceChanged(Importance.values()[i])
                 }
 
                 override fun onNothingSelected(p0: AdapterView<*>?) {
-                    item?.importance = Importance.NORMAL
+                    viewModel.onImportanceChanged(Importance.NORMAL)
                 }
-
             }
         binding.deadlineSwitch.setOnCheckedChangeListener { _, value ->
             binding.editTextDate.visibility = if (value) View.VISIBLE else View.GONE
-            if (!value) {
-                item?.deadline = null
-            }
+            viewModel.onDeadlineEnablingChanged(value)
         }
         binding.deleteButton.setOnClickListener {
-            if (args.id != -1L) {
-                scope.launch {
-                    repository.deleteToDo(args.id)
-                }
-            }
-            view.findNavController().navigate(action)
+            viewModel.onDeleteItem(args.id)
+            viewModel.onNavigateToList(view)
+        }
+        viewModel.date.observe(viewLifecycleOwner) {
+            binding.editTextDate.setText(it ?: getString(R.string.select_date))
         }
     }
 
-    private fun defaultInitialization() {
-        scope.launch {
-            item = repository.getDefaultItem()
-            withContext(Dispatchers.Main) {
+    private fun setUpFields() {
+        viewModel.item.observe(viewLifecycleOwner) {
+            if (it != null) {
+                binding.nameEditText.setText(it.name)
                 binding.saveButton.isEnabled = true
-            }
-        }
-    }
-
-    private fun initialization() {
-        scope.launch {
-            item = repository.getToDo(args.id)
-            if (item != null) {
-                withContext(Dispatchers.Main) {
-                    binding.nameEditText.setText(item!!.name)
-                    binding.saveButton.isEnabled = true
-                    if (item!!.deadline != null) {
-                        binding.deadlineSwitch.isChecked = true
-                        binding.editTextDate.visibility = View.VISIBLE
-                        binding.editTextDate.setText(item!!.deadline.toString())
-                    }
-                    binding.importanceSpinner.setSelection(item!!.importance.ordinal)
+                if (it.deadline != null) {
+                    binding.deadlineSwitch.isChecked = true
+                    binding.editTextDate.setText(it.deadline.toString())
+                } else {
+                    binding.deadlineSwitch.isChecked = false
                 }
+                binding.importanceSpinner.setSelection(it.importance.ordinal)
             }
         }
+        viewModel.onItemLoaded(args.id)
     }
 
 }

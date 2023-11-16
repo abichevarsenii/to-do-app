@@ -43,7 +43,7 @@ class ToDoViewHolder(binding: ToDoItemBinding) : RecyclerView.ViewHolder(binding
             changeCompleted(name, value)
             changeCompleted(date, value)
             toDoItem.isCompleted = value
-            onItemCompletedCallback(value, toDoItem.id)
+            onItemCompletedCallback(value, toDoItem.id!!)
         }
     }
 

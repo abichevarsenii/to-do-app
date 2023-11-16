@@ -11,8 +11,8 @@ import javax.inject.Inject
 class ToDoItemsRepository @Inject constructor(private val dataSource: ToDoItemsDataSource) {
 
     private val _items = MutableLiveData<List<ToDoItem>>(emptyList())
-    public val items: LiveData<List<ToDoItem>> = _items
     private var isVisibleCompletedItems = true
+    public val items: LiveData<List<ToDoItem>> = _items
 
     private suspend fun getItems(): List<ToDoItem> {
         val items = dataSource.getAllToDos()?.map { mappingEntityToClass(it) } ?: emptyList()
@@ -24,7 +24,12 @@ class ToDoItemsRepository @Inject constructor(private val dataSource: ToDoItemsD
     }
 
     suspend fun updateItems() {
-        _items.value = getItems()
+        _items.postValue(getItems())
+    }
+
+    suspend fun getItemById(id: Long) : ToDoItem? {
+        if (id == -1L) return mappingEntityToClass(ItemEntity())
+        return dataSource.getById(id)?.let { mappingEntityToClass(it) }
     }
 
     suspend fun changeItemCompletedState(id: Long, completed: Boolean) {
@@ -65,7 +70,7 @@ class ToDoItemsRepository @Inject constructor(private val dataSource: ToDoItemsD
 
     private fun mappingClassToEntity(item: ToDoItem): ItemEntity {
         return ItemEntity().apply {
-            id = item.id!!
+            id = item.id
             name = item.name
             importance = item.importance
             isCompleted = item.isCompleted

@@ -8,7 +8,7 @@ import java.time.LocalDate
 @Entity(tableName = "items")
 data class ItemEntity (
     @PrimaryKey(autoGenerate = true)
-    var id: Long = 0,
+    var id: Long? = null,
     var name: String = "",
     var importance: Importance = Importance.NORMAL,
     var isCompleted: Boolean = false,
