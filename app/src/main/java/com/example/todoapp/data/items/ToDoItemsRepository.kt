@@ -65,7 +65,7 @@ class ToDoItemsRepository @Inject constructor(private val dataSource: ToDoItemsD
 
     private fun mappingClassToEntity(item: ToDoItem): ItemEntity {
         return ItemEntity().apply {
-            id = item.id
+            id = item.id!!
             name = item.name
             importance = item.importance
             isCompleted = item.isCompleted

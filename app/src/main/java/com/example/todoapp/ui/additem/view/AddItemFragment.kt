@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.todoapp.core.Importance
@@ -15,6 +16,7 @@ import com.example.todoapp.MyApp
 import com.example.todoapp.data.items.ToDoItemsRepository
 import com.example.todoapp.domain.ToDoItem
 import com.example.todoapp.databinding.FragmentAddItemBinding
+import com.example.todoapp.ui.additem.stateholders.AddItemViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -31,13 +33,8 @@ import javax.inject.Inject
 class AddItemFragment : Fragment() {
 
     private lateinit var binding: FragmentAddItemBinding
-    private var item: ToDoItem? = null
     private val args: AddItemFragmentArgs by navArgs()
-    @Inject
-    lateinit var repository : ToDoItemsRepository
-    private val scope: CoroutineScope by lazy {
-        CoroutineScope(Dispatchers.Default)
-    }
+    private val viewModel: AddItemViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,45 +46,20 @@ class AddItemFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val action = AddItemFragmentDirections.actionAddItemFragmentToListFragment()
         if (args.id != -1L) {
             initialization()
         } else {
             defaultInitialization()
         }
         binding.closeButton.setOnClickListener {
-            if (item != null && args.id == -1L) {
-                scope.launch {
-                    repository.deleteToDo(item!!.id)
-                }
-            }
-            view.findNavController().navigate(action)
+            viewModel.onDeleteItem(args.id)
+            viewModel.onNavigateToList(view)
         }
-        binding.editTextDate.setOnClickListener {
-            val calendar: Calendar = Calendar.getInstance(TimeZone.getDefault())
-            val dialog = DatePickerDialog(
-                requireContext(), { view, year, month, day ->
-                    binding.editTextDate.setText("${year}.${month}.${day}")
-                    if (binding.deadlineSwitch.isChecked) {
-                        item?.deadline = LocalDate.of(year, month, day)
-                    }
-                }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)
-            )
-            dialog.show()
-        }
-        binding.nameEditText.addTextChangedListener({ _, _, _, _ -> }, { _, _, _, _ -> },
-            {
-                item?.name = it.toString()
-            }
-        )
+        binding.editTextDate.setOnClickListener { viewModel.onDatePicked(requireContext()) }
+        binding.nameEditText.addTextChangedListener { viewModel.onNameTextChanged(it) }
         binding.saveButton.setOnClickListener {
-            scope.launch {
-                if (item != null) {
-                    repository.addToDo(item!!)
-                }
-            }
-            view.findNavController().navigate(action)
+            viewModel.onItemAdded()
+            viewModel.onNavigateToList(view)
         }
         binding.importanceSpinner.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
@@ -122,16 +94,16 @@ class AddItemFragment : Fragment() {
     }
 
     private fun defaultInitialization() {
-        /*scope.launch {
+        scope.launch {
             item = repository.getDefaultItem()
             withContext(Dispatchers.Main) {
                 binding.saveButton.isEnabled = true
             }
-        }*/
+        }
     }
 
     private fun initialization() {
-        /*scope.launch {
+        scope.launch {
             item = repository.getToDo(args.id)
             if (item != null) {
                 withContext(Dispatchers.Main) {
@@ -145,17 +117,7 @@ class AddItemFragment : Fragment() {
                     binding.importanceSpinner.setSelection(item!!.importance.ordinal)
                 }
             }
-        }*/
+        }
     }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        scope.cancel()
-    }
-
-    private fun isCorrectData(): Boolean {
-        return binding.nameEditText.text.toString() != ""
-    }
-
 
 }

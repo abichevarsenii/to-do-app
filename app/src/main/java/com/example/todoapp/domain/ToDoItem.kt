@@ -7,7 +7,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class ToDoItem(
-    var id: Long,
+    var id: Long?,
     var name: String,
     var importance: Importance,
     var isCompleted: Boolean,
