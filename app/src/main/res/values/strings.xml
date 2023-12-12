@@ -7,6 +7,7 @@
     <string name="save_text">Сохранить</string>
     <string name="delete_text">Удалить</string>
     <string name="select_date">Выберите дату</string>
+    <string name="completed_count">Выполнено</string>
     <array name="importance">
         <item>Низкая</item>
         <item>Нормальная</item>

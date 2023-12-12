@@ -2,8 +2,6 @@ package com.example.todoapp.data.items
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.todoapp.core.Importance
-import com.example.todoapp.data.items.api.DatabaseApi
 import com.example.todoapp.domain.ToDoItem
 import java.time.LocalDate
 import javax.inject.Inject
@@ -11,12 +9,13 @@ import javax.inject.Inject
 class ToDoItemsRepository @Inject constructor(private val dataSource: ToDoItemsDataSource) {
 
     private val _items = MutableLiveData<List<ToDoItem>>(emptyList())
-    private var isVisibleCompletedItems = true
-    public val items: LiveData<List<ToDoItem>> = _items
+    private var _isVisibleCompletedItems = MutableLiveData<Boolean>(true)
+    val items: LiveData<List<ToDoItem>> = _items
+    val isVisibleCompletedItems: LiveData<Boolean> = _isVisibleCompletedItems
 
     private suspend fun getItems(): List<ToDoItem> {
         val items = dataSource.getAllToDos()?.map { mappingEntityToClass(it) } ?: emptyList()
-        return if (isVisibleCompletedItems) {
+        return if (isVisibleCompletedItems.value == true) {
             items
         } else {
             items.filter { !it.isCompleted }
@@ -42,7 +41,7 @@ class ToDoItemsRepository @Inject constructor(private val dataSource: ToDoItemsD
     }
 
     suspend fun changeVisibilityCompleted(isVisible: Boolean? = null) {
-        isVisibleCompletedItems = isVisible ?: !isVisibleCompletedItems
+        _isVisibleCompletedItems.value = isVisible ?: (isVisibleCompletedItems.value != true)
         updateItems()
     }
 

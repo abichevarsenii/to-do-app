@@ -12,7 +12,11 @@
         tools:layout="@layout/fragment_list" >
         <action
             android:id="@+id/action_listFragment_to_addItemFragment"
-            app:destination="@id/addItemFragment" />
+            app:destination="@id/addItemFragment"
+            app:enterAnim="@anim/slide_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/slide_in"
+            app:popExitAnim="@anim/fade_out" />
     </fragment>
     <fragment
         android:id="@+id/addItemFragment"
@@ -21,7 +25,12 @@
         tools:layout="@layout/fragment_add_item" >
         <action
             android:id="@+id/action_addItemFragment_to_listFragment"
-            app:destination="@id/listFragment" />
+            app:destination="@id/listFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/slide_out"
+            app:launchSingleTop="false"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/slide_out" />
         <argument
             android:name="id"
             app:argType="long"

@@ -2,6 +2,7 @@ package com.example.todoapp.ui.list.stateholders
 
 import android.view.View
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.findNavController
 import com.example.todoapp.data.items.ToDoItemsRepository
@@ -13,6 +14,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ListViewModel @Inject constructor(private val itemsRepository: ToDoItemsRepository) : ViewModel() {
     val items = itemsRepository.items
+    val completedTaskCountString = (items.map { list -> list.count { it.isCompleted }.toString() } )
+    val isVisibleCompletedItems = itemsRepository.isVisibleCompletedItems
 
     fun updateItems(){
         viewModelScope.launch {

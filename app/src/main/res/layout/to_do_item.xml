@@ -49,7 +49,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/info_outline"
-        app:tint="@color/label_tertiary" />
+        app:tint="@color/label_tertiary"
+        android:foreground="?attr/selectableItemBackground"/>
 
     <ImageView
         android:id="@+id/priorityIcon"
